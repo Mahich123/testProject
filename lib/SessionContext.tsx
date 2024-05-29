@@ -9,6 +9,7 @@ type Props = {
 
 type SessionData = {
   session: string | undefined;
+  sessionData: string | undefined;
 };
 
 const SessionContext = createContext<SessionData | undefined>(undefined);
@@ -19,17 +20,35 @@ function useFetchSession() {
     queryFn: async (): Promise<SessionData> => {
       const res = await fetch("/api/session");
       if (!res.ok) {
-        const errorBody = await res.text()
-        console.error("Error fetching session", errorBody)
+        
         throw new Error("Error fetching session");
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as SessionData;
       console.log(data);
       return data;
     },
   });
 }
+
+function useFetchSessionData(session: string) {
+  console.log(session)
+  return useQuery<SessionData>({
+    queryKey: ["sessionData", session],
+    queryFn: async (): Promise<SessionData> => {
+      const res = await fetch("/api/sessionData");
+     
+      if (!res.ok) {
+        
+        throw new Error("Error fetching session");
+      }
+      console.log(res.json())
+      const data = (await res.json()) as SessionData;
+      console.log(data);
+      return data;
+    },
+  });
+} 
 
 
 
@@ -46,8 +65,15 @@ export const useSessionContext = () => {
 
 
 export const SessionProvider = ({children}: Props) => {
-  const {data, isLoading, error} = useFetchSession()
+  const { data: sessionData, isLoading, error } = useFetchSession();
+  const { data: sessionDataResponse } = useFetchSessionData(sessionData?.session || "");
 
+  const value = {
+    session: sessionData?.session,
+    sessionData: sessionDataResponse?.sessionData
+  }
+
+  console.log(value)
   if(isLoading) {
     return (
       <div>Loading....</div>
@@ -60,7 +86,7 @@ export const SessionProvider = ({children}: Props) => {
     )
   }
   return (
-    <SessionContext.Provider value={data}>
+    <SessionContext.Provider value={value}>
       {children}
     </SessionContext.Provider>
   )

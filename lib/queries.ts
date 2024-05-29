@@ -9,6 +9,6 @@ type Data = {
 export  const showData =  async ({session}: Data) => {
     console.log(session)
     const data = await db.select().from(oauthAccount).where(eq(oauthAccount.user_id, session))     
-    // console.log(data)
+    console.log(data)
     return data;
 }
