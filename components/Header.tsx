@@ -10,11 +10,19 @@ import { useSessionContext } from "@/lib/SessionContext";
 
 const Header =  () => {
 
-  const {session} = useSessionContext()
+  const {session, sessionData} = useSessionContext()
 
   console.log(session)
-  // console.log(session)
+  console.log(sessionData)
 
+
+  if (!session ) {
+    return (
+      <div>session not found sry</div>
+    )
+  }
+
+  
   return (
     <div className="max-w-[988px] mx-auto sticky top-0 backdrop-blur-md px-6 sm:px-2 h-[12vh] rounded-md bg-white/30 ">
       <div className="w-full h-0.5 mt-3 bg-gray-700 animate-expand"></div>
@@ -37,10 +45,12 @@ const Header =  () => {
           <div className="absolute  top-[65px] left-[70%]  w-[48px] h-[10px] bg-[#5A5959] border rounded-[50%]"></div>
         </div>
 
-      {
-        session ? (
-          <div>
+        
 
+      {
+        session && sessionData ? (
+          <div>
+              <p>session here</p>
 
           </div>
         ) : (

@@ -7,7 +7,7 @@ export const GET = async (req:NextRequest) => {
   const sessionValue = cookies.get("session")?.value
 
   if(!sessionValue){
-    console.log("session not found")
+    return NextResponse.json({ error: "Session  not found" }, { status: 400 });
   }
 console.log(sessionValue)
   return NextResponse.json({ session: sessionValue });

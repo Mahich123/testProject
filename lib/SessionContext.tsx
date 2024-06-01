@@ -12,43 +12,52 @@ type SessionData = {
   sessionData: string | undefined;
 };
 
-const SessionContext = createContext<SessionData | undefined>(undefined);
+const SessionContext = createContext<SessionData>({session: "", sessionData: ""});
+
 
 function useFetchSession() {
   return useQuery<SessionData>({
     queryKey: ["session"],
     queryFn: async (): Promise<SessionData> => {
-      const res = await fetch("/api/session");
-      if (!res.ok) {
-        
-        throw new Error("Error fetching session");
+      try {
+        const res = await fetch('/api/session');
+        if (!res.ok) {
+          throw new Error("Error fetching session");
+        }
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching session data:", error);
+        throw error; 
       }
-
-      const data = (await res.json()) as SessionData;
-      console.log(data);
-      return data;
     },
   });
 }
 
+
 function useFetchSessionData(session: string) {
-  console.log(session)
+
+
   return useQuery<SessionData>({
     queryKey: ["sessionData", session],
     queryFn: async (): Promise<SessionData> => {
-      const res = await fetch("/api/sessionData");
-     
-      if (!res.ok) {
-        
-        throw new Error("Error fetching session");
+      try {
+        const res = await fetch(`/api/sessionData?session=${session}`);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch session data: ${res.statusText}`);
+        }
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching session data:", error);
+        throw error; 
       }
-      console.log(res.json())
-      const data = (await res.json()) as SessionData;
-      console.log(data);
-      return data;
     },
+
+
   });
-} 
+}
+
 
 
 
@@ -84,6 +93,14 @@ export const SessionProvider = ({children}: Props) => {
     return (
       <div>{error.message}</div>
     )
+  }
+
+  if (!sessionData?.session) {
+    return (
+      <SessionContext.Provider value={{ session: undefined, sessionData: undefined }}>
+        {children}
+      </SessionContext.Provider>
+    );
   }
   return (
     <SessionContext.Provider value={value}>
