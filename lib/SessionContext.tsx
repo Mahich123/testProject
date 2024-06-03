@@ -3,6 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { createContext, useContext, ReactNode } from "react";
 
+import Home from '@/app/(home)/page'
+
 type Props = {
   children: ReactNode;
 };
@@ -22,6 +24,7 @@ function useFetchSession() {
       try {
         const res = await fetch('/api/session');
         if (!res.ok) {
+          
           throw new Error("Error fetching session");
         }
         const data = await res.json();
@@ -85,29 +88,38 @@ export const SessionProvider = ({children}: Props) => {
   console.log(value)
   if(isLoading) {
     return (
-      <div>Loading....</div>
+      <div className=" flex items-center justify-center">Loading....</div>
     )
   }
 
   if(error) {
     return (
-      <div>{error.message}</div>
+      <div> 
+      Error here
+
+      </div>
     )
   }
 
-  if (!sessionData?.session) {
-    return (
-      <SessionContext.Provider value={{ session: undefined, sessionData: undefined }}>
-        {children}
-      </SessionContext.Provider>
-    );
-  }
+ 
   return (
     <SessionContext.Provider value={value}>
-      {children}
+      {sessionData && sessionData.session? (
+        <>
+     
+          {children}
+        </>
+      ) : (
+        <>
+        <Home />
+        </>
+      )}
     </SessionContext.Provider>
-  )
-}
+  );
+};
+
+
+
 
 
 

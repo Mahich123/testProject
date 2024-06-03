@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useSessionContext } from "@/lib/SessionContext";
 
 
-const Header =  () => {
+export const Header =  () => {
 
   const {session, sessionData} = useSessionContext()
 
@@ -16,11 +16,13 @@ const Header =  () => {
   console.log(sessionData)
 
 
-  if (!session ) {
-    return (
-      <div>session not found sry</div>
-    )
-  }
+  // if (!session ) {
+  //   return (
+  //     <div>
+         
+  //     </div>
+  //   )
+  // }
 
   
   return (
@@ -45,19 +47,19 @@ const Header =  () => {
           <div className="absolute  top-[65px] left-[70%]  w-[48px] h-[10px] bg-[#5A5959] border rounded-[50%]"></div>
         </div>
 
-        
+        {
+          !session ? (
+            <Link href='/socials'>
+            <Button>SignUp</Button>
+            </Link>
+          ): (
+            <div>
+              session here
+            </div>
+          )
+        }
 
-      {
-        session && sessionData ? (
-          <div>
-              <p>session here</p>
-
-          </div>
-        ) : (
-          <Button>SignUp</Button>
-        )
-      }
-
+     
         
       </div>
     </div>
